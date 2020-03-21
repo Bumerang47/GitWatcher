@@ -1,15 +1,22 @@
 import os
-import platform
 from dataclasses import asdict
 from itertools import cycle
-
 from typing import List, Dict
+
+from . import logger
 
 __all__ = ('clear', 'Throbber', 'Table')
 
 
 def clear():
-    if os.name == 'nt' or platform.system() == 'Windows':
+    for h in logger.handlers:
+        h.flush()
+        h.close()
+
+    term = os.getenv('TERM')
+    if not term:
+        return
+    if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')

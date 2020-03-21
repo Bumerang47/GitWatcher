@@ -7,6 +7,9 @@ pip install -e .
 
 python -m git_watcher <URL>  
 ```
+
+Before run on Pycharm turn on "*Emulate terminal in output console*"  
+
 ### Description
 ```bash
 usage: GitWatcher [-h] [--branch BRANCH] [--since SINCE] [--until UNTIL] url

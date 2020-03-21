@@ -1,6 +1,7 @@
 import asyncio
 from typing import List, Any
 
+from . import logger
 from .display import Throbber, Table, clear
 from .objects import Contributor
 from .source import GitHub
@@ -28,7 +29,8 @@ class Watcher:
             clear()
 
             table = Table(Contributor, self.contributors)
-            print(table, self.throbber, sep='\n')
+            logger.info(f'{table}\n'
+                        f'{self.throbber}')
 
     async def run(self):
         await asyncio.gather(

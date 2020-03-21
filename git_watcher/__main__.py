@@ -1,8 +1,13 @@
 import asyncio
+import logging
 
-from git_watcher.config import base_parser
+from git_watcher import config
 from git_watcher.watcher import Watcher
 
-config = base_parser()
-watcher = Watcher(config)
-asyncio.run(watcher.run())
+try:
+    watcher = Watcher(config)
+    asyncio.run(watcher.run())
+except KeyboardInterrupt:
+    exit()
+finally:
+    logging.shutdown()

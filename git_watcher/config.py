@@ -23,4 +23,6 @@ def base_parser():
                         help='Get result after this date. This is a timestamp or ISO format')
     parser.add_argument('--until', type=parse_date, default=None,
                         help='Get result before this date. This is a timestamp or ISO format')
+    parser.add_argument('--no-debug', default=True, dest='debug', action='store_false',
+                        help='Disable debug and output to stdout')
     return parser.parse_args()
