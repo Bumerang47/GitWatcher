@@ -20,6 +20,18 @@ class Contributor:
 
 
 @dataclass
+class Statistic:
+    name: str
+    opened: str
+    closed: int = 0
+    old_opened: str = ''
+
+    @classmethod
+    def columns(cls):
+        return cls.__dataclass_fields__.keys()
+
+
+@dataclass
 class Destination:
     owner: str
     repo: str

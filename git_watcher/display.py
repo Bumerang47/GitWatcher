@@ -1,5 +1,5 @@
 import os
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 from itertools import cycle
 from typing import List, Dict
 
@@ -37,13 +37,14 @@ class Table:
     def __init__(self, cls, data, weight=5):
         self.columns = {key: max(weight, len(key)) for key in cls.columns()}
         self.rows = []
-        for i, ob in enumerate(data, start=1):
-            ob_dict = asdict(ob)
-            ob_dict['id'] = str(i)
+        for i, item in enumerate(data, start=1):
+            if is_dataclass(item):
+                item = asdict(item)
+            item['id'] = str(i)
 
             row: List[str] = []
             for head, w in self.columns.items():
-                v = str(ob_dict.get(head, ''))
+                v = str(item.get(head, ''))
                 self.columns[head] = max(w, len(v))
                 row.append(v)
             self.rows.append(row)

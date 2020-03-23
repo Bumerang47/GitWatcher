@@ -76,9 +76,11 @@ class AbstractProvider(ABC):
         self.since = config.since
         self.until = config.until
         self.branch = config.branch
-        self.contributors = {}
-        self.pulls_info = {}
+        self.contributors = {'-': Contributor('-')}
+        self.issues_info = default_statistics('Issues')
+        self.pulls_info = default_statistics('Pulls')
         self.paginate_patt = re.compile(self.paginate_re)
+        self.throttler = Throttler()
 
     @abstractmethod
     def parse_contributors(self, res: Dict[str, Any]):
@@ -93,7 +95,13 @@ class AbstractProvider(ABC):
 
     @abstractmethod
     async def update_pulls_info(self):
-        """ Request and load information about pull requests
+        """ Request and load stats about pull requests
+
+        """
+
+    @abstractmethod
+    async def update_issues_info(self):
+        """ Request and load stats about issues
 
         """
 
@@ -103,6 +111,7 @@ class AbstractProvider(ABC):
         Generate sequence of args and kwargs for aiohttp client session request
         """
 
+    @abstractmethod
     async def request(self, *args, **kwargs) -> AsyncGenerator:
         """
         Generate and call each possible request for results
@@ -144,9 +153,15 @@ class AbstractProvider(ABC):
                 return
         raise RuntimeError(f'give up after {self.attempts_count} attempts on {req.url}')
 
-    def get_contributors(self, size=30):
-        return heapq.nlargest(size, self.contributors.values(), key=lambda a: a.count)
+    def get_top_contributors(self):
+        return heapq.nlargest(self.config.size_top_table,
+                              self.contributors.values(),
+                              key=lambda a: a.count)
 
     @staticmethod
     def session(*args, **kwargs):
         return ClientSession(*args, **kwargs)
+
+
+def default_statistics(name):
+    return {'name': name, 'closed': '-', 'opened': '-', 'old_opened': '-'}
