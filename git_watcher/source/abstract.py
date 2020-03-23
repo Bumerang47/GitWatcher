@@ -1,8 +1,10 @@
 import asyncio
 import heapq
 import logging
+import re
 import time
 from abc import ABC, abstractmethod
+from base64 import b64encode
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Dict, Any, Optional, AsyncGenerator, Generator, Mapping
@@ -53,12 +55,15 @@ RequestsGenerator = Generator[Request, None, None]
 class AbstractProvider(ABC):
     base_url: str
     contributors: Dict[str, Contributor]
+    pulls_info: Dict
     throttler: Throttler
 
     since: Optional[datetime]
     until: Optional[datetime]
     branch: Optional[str]
 
+    paginate_patt: re.Pattern
+    paginate_re = r''
     attempts_count: int = 10
     attempts_max_interval: int = 60
     limit_exceeded: bool = False
@@ -72,6 +77,8 @@ class AbstractProvider(ABC):
         self.until = config.until
         self.branch = config.branch
         self.contributors = {}
+        self.pulls_info = {}
+        self.paginate_patt = re.compile(self.paginate_re)
 
     @abstractmethod
     def parse_contributors(self, res: Dict[str, Any]):
@@ -81,6 +88,12 @@ class AbstractProvider(ABC):
     @abstractmethod
     async def update_contributors(self):
         """ Request and load new contributors from git repository
+
+        """
+
+    @abstractmethod
+    async def update_pulls_info(self):
+        """ Request and load information about pull requests
 
         """
 
@@ -97,22 +110,26 @@ class AbstractProvider(ABC):
 
     @asynccontextmanager
     async def single_request(self, req: Request) -> AsyncGenerator[ClientResponse, None]:
+        """ Main safely request for one result
         """
-        Main safely request for one result
-        """
+
+        headers = req.kwargs.pop('headers', {})
+        if self.config.auth:
+            auth_data = b64encode(self.config.auth.encode()).decode()
+            headers['Authorization'] = f'Basic {auth_data}'
 
         for _ in range(self.attempts_count):
             try:
                 async with self.throttler, self.session() as s, \
                         s.request(req.method, req.url, *req.args, **req.kwargs,
-                                  raise_for_status=True) as resp:
+                                  headers=headers, raise_for_status=True) as resp:
                     yield resp
             except ClientResponseError as ex:
-                headers: Mapping = ex.headers or {}
-                remain = headers.get('X-RateLimit-Remaining')
+                req_headers: Mapping = ex.headers or {}
+                remain = req_headers.get('X-RateLimit-Remaining')
                 if remain == '0':
                     self.limit_exceeded = True
-                    rate_reset = int(headers.get('X-RateLimit-Reset', 0))
+                    rate_reset = int(req_headers.get('X-RateLimit-Reset', 0))
                     now_t_stamp = datetime.utcnow().timestamp()
                     wait_reset = int(rate_reset - now_t_stamp)
 

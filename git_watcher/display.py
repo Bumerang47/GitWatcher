@@ -48,7 +48,7 @@ class Table:
                 row.append(v)
             self.rows.append(row)
 
-    def __repr__(self):
+    def __str__(self):
         sizes = []
         header = []
         for c, w in self.columns.items():

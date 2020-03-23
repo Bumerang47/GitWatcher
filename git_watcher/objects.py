@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 @dataclass(unsafe_hash=True)
 class Contributor:
     login: str
-    count: int
+    count: int = 0
     email: str = ''
 
     @staticmethod

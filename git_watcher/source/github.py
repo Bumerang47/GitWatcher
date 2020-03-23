@@ -1,5 +1,5 @@
-import re
-from datetime import datetime
+from collections import Counter
+from datetime import datetime, timezone as tz
 from typing import List, Dict
 from urllib.parse import urljoin
 
@@ -8,8 +8,9 @@ from ..objects import Contributor
 
 
 class GitHub(AbstractProvider):
+    pr_max_fresh_days = 30
     base_url = 'https://api.github.com/'
-    paginate_patt = re.compile(r'&page=(?P<n>\d+)>;\srel="(?P<name>\w+)"')
+    paginate_re = r'&page=(?P<n>\d+)>;\srel="(?P<name>\w+)"'
 
     throttler = Throttler(interval=0.3)
 
@@ -28,6 +29,34 @@ class GitHub(AbstractProvider):
         async for resp in self.request('GET', url, params=params):
             list(self.parse_contributors(resp, _contributors))
         self.contributors = _contributors
+
+    def parse_pulls(self, data):
+        closed = 0
+        opened = 0
+        old_opened = 0
+        now = datetime.now(tz=tz.utc)
+        for pull in data:
+            if pull['draft']:
+                continue
+            if pull['state'] == 'open':
+                opened += 1
+
+                created_at = datetime.strptime(pull['created_at'], '%Y-%m-%dT%H:%M:%S%z')
+                if (now - created_at).days > self.pr_max_fresh_days:
+                    old_opened += 1
+            elif pull['state'] == 'closed':
+                closed += 1
+        return {'closed': closed, 'opened': opened, 'old_opened': old_opened}
+
+    async def update_pulls_info(self):
+        url = urljoin(self.base_url, f'/repos/{self.owner}/{self.repo}/pulls')
+        params = {'base': self.branch, 'state': 'all', 'per_page': 100}
+
+        _pulls = Counter()
+
+        async for resp in self.request('GET', url, params=params):
+            _pulls.update(self.parse_pulls(resp))
+        self.pulls_info = _pulls
 
     def merge_contributors(self, new_list: List, main_set: Dict):
         res = main_set.copy()
