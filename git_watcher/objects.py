@@ -3,19 +3,19 @@ from dataclasses import dataclass
 from urllib.parse import urlparse
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Contributor:
-    name: str
+    login: str
     count: int
     email: str = ''
 
     @staticmethod
     def columns():
-        return ('email', 'count')
+        return ('login', 'count')
 
     def __eq__(self, other):
         if isinstance(other, str):
-            return self.email == other
+            return self.login == other
         return super().__eq__(other)
 
 

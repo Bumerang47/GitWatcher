@@ -1,5 +1,5 @@
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone as tz
 from numbers import Number
 
 from .objects import Destination
@@ -8,10 +8,10 @@ from .objects import Destination
 def parse_date(v):
     if not v or isinstance(v, datetime):
         return v
-    elif isinstance(Number, v):
-        return datetime.fromtimestamp(v)
+    elif isinstance(v, Number):
+        return datetime.fromtimestamp(v).replace(microsecond=0, tzinfo=tz.utc)
     else:
-        return datetime.fromisoformat(v)
+        return datetime.fromisoformat(v).replace(microsecond=0, tzinfo=tz.utc)
 
 
 def base_parser():

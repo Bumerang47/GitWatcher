@@ -5,12 +5,11 @@ from typing import List, Dict
 
 from . import logger
 
-__all__ = ('clear', 'Throbber', 'Table')
+__all__ = ('clear_output', 'Throbber', 'Table')
 
 
-def clear():
+def clear_output():
     for h in logger.handlers:
-        h.flush()
         h.close()
 
     term = os.getenv('TERM')

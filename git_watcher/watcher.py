@@ -2,7 +2,7 @@ import asyncio
 from typing import List, Any
 
 from . import logger
-from .display import Throbber, Table, clear
+from .display import Throbber, Table, clear_output
 from .objects import Contributor
 from .source import GitHub
 
@@ -26,11 +26,14 @@ class Watcher:
     async def display(self):
         while True:
             await asyncio.sleep(0.3)
-            clear()
+            clear_output()
 
+            info_status = 'Ø' if self.provider.limit_exceeded else ''
             table = Table(Contributor, self.contributors)
+
             logger.info(f'{table}\n'
-                        f'{self.throbber}')
+                        f'{self.throbber}'
+                        f'{info_status}')
 
     async def run(self):
         await asyncio.gather(

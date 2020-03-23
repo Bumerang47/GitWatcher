@@ -9,4 +9,4 @@ logger = logging.getLogger(__name__)
 config = base_parser()
 
 if not config.debug:
-    logger.propagate = 0
+    logger.propagate = False
