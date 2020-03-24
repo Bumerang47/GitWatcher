@@ -4,7 +4,13 @@ Watch bulletin about git repository
 ### Install
 ```bash
 pip install -e .
-
+```
+or
+```bash
+pip install git+https://github.com/Bumerang47/GitWatcher
+```
+### Run
+```bash
 python -m git_watcher <URL>  
 ```
 
