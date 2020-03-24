@@ -1,5 +1,6 @@
-from setuptools import setup
 from pathlib import Path
+
+from setuptools import setup
 
 
 def read_requirements(name: str):
@@ -13,4 +14,5 @@ setup(
     extras_require={
         "dev": read_requirements("requirements-dev.txt"),
     },
+    package_data={'git_watcher': ['logging.conf']},
 )

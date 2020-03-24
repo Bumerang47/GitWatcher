@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
+from git_watcher import logger
+from git_watcher.config import base_parser
 from git_watcher.watcher import Watcher
-from . import logger
-from .config import base_parser
 
 config = base_parser()
 
