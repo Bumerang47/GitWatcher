@@ -1,0 +1,27 @@
+[{"sha": "1",
+ "commit": {
+  "author": {"name": "Test Author 1", "email": "test1@user.name", "date": "2020-02-02T00:00:00Z"},
+  "committer": {"name": "Test Author 1", "email": "test1@user.name", "date": "2020-02-02T00:00:00Z"}
+ },
+ "author": {"login": "TestAuthor1", "id": "11"}
+},
+{"sha": "2",
+ "commit": {
+  "author": {"name": "Test Author 2", "email": "test2@user.name", "date": "2020-02-02T01:00:00Z"},
+  "committer": {"name": "Test Author 2", "email": "test2@user.name", "date": "2020-02-02T01:00:00Z"}
+ },
+ "author": {"login": "TestAuthor2", "id": "22"}
+},
+{"sha": "3",
+ "commit": {
+  "author": {"name": "Test Author 1", "email": "test1@user.name", "date": "2020-02-02T02:00:00Z"},
+  "committer": {"name": "Test Author 1", "email": "test1@user.name", "date": "2020-02-02T02:00:00Z"}
+ },
+ "author": {"login": "TestAuthor1", "id": "11"}
+},
+{"sha": "4",
+ "commit": {
+  "author": {"name": "Test Author 3", "email": "test3@user.name", "date": "2020-02-02T02:30:00Z"},
+  "committer": {"name": "Test Author 3", "email": "test3@user.name", "date": "2020-02-02T02:30:00Z"}
+ }
+}]
