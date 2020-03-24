@@ -24,7 +24,6 @@ class GitHub(AbstractProvider):
         params = {k: v for k, v in params.items() if v}
 
         _contributors = {}
-
         async for resp in self.request('GET', url, params=params):
             list(self.parse_contributors(resp, _contributors))
 
@@ -128,7 +127,6 @@ class GitHub(AbstractProvider):
                 links = resp.headers.get('Link', '')
                 pages = {name: page for page, name in self.paginate_patt.findall(links)}
                 request.paginate = pages
-
                 yield await resp.json()
 
     def valid_dates(self, item, key_date='date') -> Optional[datetime]:

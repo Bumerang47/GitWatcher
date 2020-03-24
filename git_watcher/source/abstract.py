@@ -53,6 +53,11 @@ RequestsGenerator = Generator[Request, None, None]
 
 
 class AbstractProvider(ABC):
+    """ Base class for safely requests, paginate order requests and
+    describe interface got load data
+
+    :limit_exceeded bool: only for indicator about rate limit exceeded
+    """
     base_url: str
     contributors: Dict[str, Contributor]
     pulls_info: Dict
@@ -83,7 +88,8 @@ class AbstractProvider(ABC):
         self.throttler = Throttler()
 
     @abstractmethod
-    def parse_contributors(self, res: Dict[str, Any]):
+    def parse_contributors(self, res: Dict[str, Any],
+                           storage: Optional[Mapping]) -> Generator:
         """ Return contributors instance from raw response of commits
         """
 

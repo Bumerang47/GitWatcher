@@ -16,7 +16,7 @@ def parse_date(v):
 
 def base_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('dest', type=Destination.from_str, metavar='url', help='Repository URL')
+    parser.add_argument('dest', type=Destination.from_str, metavar='URL', help='Repository URL')
     parser.add_argument('--branch', type=str, default='master', required=False,
                         help='Branch name for analyze commits [%(default)s].')
     parser.add_argument('--since', type=parse_date, default=None, required=False,
@@ -34,4 +34,5 @@ def base_parser():
                         help='Period in second between repeat upload data [%(default)s].')
     parser.add_argument('--size-top-table', default=30, type=int,
                         help='Size table of top contributors [%(default)s].')
-    return parser.parse_args()
+    args, _ = parser.parse_known_args()
+    return args
