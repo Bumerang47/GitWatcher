@@ -1,6 +1,11 @@
 # GitWatcher
-Watch bulletin about git repository
-
+The simple utility of a dashboard in the console for information from git repository.  
+I use only native python libraries (beside aiohttp for requests) yet.  
+The decision by requirements from [test task](https://drive.google.com/file/d/1iDiNPnQgr1GkIDNNi-75wfLYx0M939eB/view).  
+  
+Demonstration of display:  
+![](https://image.prntscr.com/image/KadjCbq2Q_Sj2bz-Xw0JrQ.gif)  
+  
 ### Install
 ```bash
 pip install -e .
